@@ -145,7 +145,7 @@ async function router(ctx) {
       body = await getBody(SearchUrl(id,page), 'search')
       break;
     case '/api/book':
-      body = await getBody(ReadUrl(id ,bookid), 'book')
+      body = await getBody(ReadUrl(bookid ,id), 'book')
       break;
     default:
       body = {

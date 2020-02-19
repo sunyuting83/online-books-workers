@@ -631,11 +631,13 @@ async function BookJson (data = '') {
     if (lsa) {
       const title = $(lsa).text()
       const id = makeLastId($(lsa).attr('href'))
-      json.list = [...json.list, {
-        id: id,
-        title: title,
-        sort: index
-      }]
+      if(id !== 0) {
+        json.list = [...json.list, {
+          id: id,
+          title: title,
+          sort: index
+        }]
+      }
     }
   })
   return json

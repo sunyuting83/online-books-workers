@@ -1,6 +1,60 @@
+function handleOptions(request) {
+  // Make sure the necesssary headers are present
+  // for this to be a valid pre-flight request
+  if (
+    request.headers.get('Origin') !== null &&
+    request.headers.get('Access-Control-Request-Method') !== null &&
+    request.headers.get('Access-Control-Request-Headers') !== null
+  ) {
+    // Handle CORS pre-flight request.
+    // If you want to check the requested method + headers
+    // you can do that here.
+    return new Response(null, {
+      headers: corsHeaders,
+    })
+  } else {
+    // Handle standard OPTIONS request.
+    // If you want to allow other HTTP Methods, you can do that here.
+    return new Response(null, {
+      headers: {
+        Allow: 'GET, HEAD, POST, OPTIONS',
+      },
+    })
+  }
+}
 addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
+  const request = event.request
+  const url = new URL(request.url)
+  if (url.pathname.startsWith(proxyEndpoint)) {
+    if (request.method === 'OPTIONS') {
+      // Handle CORS preflight requests
+      event.respondWith(handleOptions(request))
+    } else if (
+      request.method === 'GET' ||
+      request.method === 'HEAD' ||
+      request.method === 'POST'
+    ) {
+      // Handle requests to the API server
+      event.respondWith(handleRequest(request))
+    } else {
+      event.respondWith(async () => {
+        return new Response(null, {
+          status: 405,
+          statusText: 'Method Not Allowed',
+        })
+      })
+    }
+  } else {
+    // Serve demo page
+    event.respondWith(handleRequest(event.request))
+  }
 })
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+}
+const proxyEndpoint = '/api/'
 /**
  * Respond with hello worker text
  * @param {Request} request
@@ -17,7 +71,13 @@ async function handleRequest(request) {
     path: path,
     query: query
   })
-  return new Response(JSON.stringify(some), init)
+  response = new Response(JSON.stringify(some), init)
+  // Recreate the response so we can modify the headers
+  // Set CORS headers
+  response.headers.set('Access-Control-Allow-Origin', '*')
+  // Append to/Add Vary header so browser will cache response correctly
+  response.headers.append('Vary', 'Origin')
+  return response
 }
 
 /**

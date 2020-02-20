@@ -10,3 +10,4 @@ node_modules/
 .cargo-ok
 package-lock.json
 wrangler.toml
+cs.js

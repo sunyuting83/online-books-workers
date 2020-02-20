@@ -243,8 +243,8 @@ const ReadUrl = (bookid = '', id = '') => {
 }
 
 function encode(str = '', charset = '') {
-  var buf = iconv.encode(str, charset);
-  // buf = [];
+  str = iconv.decode(str, 'utf8')
+  var buf = iconv.encode(str, 'gbk');
   var encodeStr = '';
   var ch = '';
   for (var i = 0; i < buf.length; i++) {

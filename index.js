@@ -769,12 +769,12 @@ async function readJson (data = '') {
 
 // make book id
 function makeBookId (url = '') {
-  return Number(url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')))
+  return Number(url.substring(url.lastIndexOf('_') + 1, url.lastIndexOf('/')))
 }
 
 // make last book id
 function makeLastId (url = '') {
-  return Number(url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.')))
+  return Number(url.substring(url.lastIndexOf('_') + 1, url.lastIndexOf('/')))
 }
 
 function Img2Base64 (url = '', bookid = 0) {
